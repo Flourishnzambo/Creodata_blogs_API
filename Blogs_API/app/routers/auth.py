@@ -1,4 +1,5 @@
-# routers/auth.py
+# handles login authentication
+# this code verifies user credentials and generates a JWT token
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -10,6 +11,7 @@ from Blogs_API.core.security import verify_password  # if you use password hashi
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+# Define a POST endpoint for /auth/login
 @router.post("/login")
 def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     # Step 1: Fetch the user

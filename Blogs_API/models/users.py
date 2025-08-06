@@ -17,3 +17,5 @@ class User(Base):
 
     posts = relationship("Post", back_populates="creator", foreign_keys="Post.created_by")
     # published_posts = relationship("Post", foreign_keys="Post.published_by")  # optional
+    categories_created = relationship("Category", foreign_keys="Category.created_by", back_populates="creator")
+    categories_published = relationship("Category", foreign_keys="Category.published_by", back_populates="publisher")

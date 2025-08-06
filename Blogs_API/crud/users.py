@@ -7,6 +7,9 @@ import Blogs_API.schemas.users as user_schemas
 import Blogs_API.models.users as user_models
 from Blogs_API.models.users import User
 from Blogs_API.app.routers.aouth2 import get_current_user
+from Blogs_API.models import users as models
+
+
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -38,7 +41,7 @@ def create_user(user: user_schemas.UserCreate, db: Session = Depends(get_db),
 # Get all users
 @router.get("/", response_model=list[user_schemas.UserOut])
 def get_all_users(db: Session = Depends(get_db),
-                  current_user: User = Depends(get_current_user)):
+                  current_user: models.User = Depends(get_current_user)):
     return db.query(user_models.User).all()
 
 # Get user by ID

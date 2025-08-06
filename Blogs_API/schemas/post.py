@@ -10,6 +10,7 @@ class PostBase(BaseModel):
 
 class PostCreate(BaseModel):
     title: str
+    content: str
     category_id: int
     created_by: int
     published_by: int

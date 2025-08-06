@@ -23,43 +23,21 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 # CREATE POST
 @router.post("/", response_model=PostOut, status_code=status.HTTP_201_CREATED)
 def create_post(
-    title: str = Form(...),
-    category_id: int = Form(...),
-    created_by: str = Form(...),
-    published_by: str = Form(...),
-    tag_id: Optional[List[int]] = Form(None),
-    file: UploadFile = File(...),
+    post_data: PostCreate,
     db: Session = Depends(get_db)
 ):
-    if file.content_type not in ["application/pdf", "text/plain"]:
-        raise HTTPException(status_code=415, detail="Only PDF and TXT files are allowed")
-
-    try:
-        contents = file.file.read()
-        if file.content_type == "application/pdf":
-            doc = fitz.open(stream=contents, filetype="pdf")
-            full_text = ""
-            for page in doc:
-                full_text += page.get_text()
-            doc.close()
-        elif file.content_type == "text/plain":
-            full_text = contents.decode("utf-8")
-        else:
-            raise HTTPException(status_code=415, detail="Unsupported file type")
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to extract text: {str(e)}")
+    
 
     db_post = Post(
-        title=title,
-        content=full_text,
-        category_id=category_id,
-        created_by=created_by,
-        published_by=published_by
+        title=post_data.title,
+        content=post_data.content,
+        category_id=post_data.category_id,
+        created_by=post_data.created_by,
+        published_by=post_data.published_by
     )
 
-    if tag_id:
-        tags = db.query(Tag).filter(Tag.id.in_(tag_id)).all()
+    if post_data.tag_id:
+        tags = db.query(Tag).filter(Tag.id.in_(post_data.tag_id)).all()
         db_post.tags = tags
 
     db.add(db_post)

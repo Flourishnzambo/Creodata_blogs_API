@@ -20,7 +20,12 @@ def get_db():
 # Create a new category
 @router.post("/", response_model=categories.CategoryOut)
 def create_category(category: categories.CategoryCreate, db: Session = Depends(get_db)):
-    new_category = Category(name=category.name)
+    new_category = models.Category(
+       name=category.name,
+       description=category.description,
+       created_by=category.created_by,
+       published_by=category.published_by
+    )
     db.add(new_category)
     db.commit()
     db.refresh(new_category)
